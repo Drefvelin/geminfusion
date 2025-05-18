@@ -1,0 +1,3 @@
+geminfusion.admin:
+       description: Admin Perms for GemInfusion.
+       default: false
