@@ -13,7 +13,7 @@ public class CommandManager implements Listener, CommandExecutor{
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if(cmd.getName().equalsIgnoreCase(cmd1)) {
 			if(Permissions.isAdmin(sender) == false) {
-				sender.sendMessage("§cYou do not have access to this command!");
+				sender.sendMessage("Â§cYou do not have access to this command!");
 				return false;
 			}
 			if(args[0].equalsIgnoreCase("reload")) {

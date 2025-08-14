@@ -12,6 +12,7 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,6 +22,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import io.lumine.mythic.lib.api.item.NBTItem;
 import net.Indyuce.mmoitems.ItemStats;
@@ -149,11 +151,20 @@ public class InfusionEvents implements Listener{
 										GemRarity r = getRarity();
 										if(r.shouldAnnounce()) {
 											for(Player player : Bukkit.getOnlinePlayers()) {
-												player.sendMessage("§e"+p.getName()+" just infused a "+r.getName()+" "+gem.getColour()+gem.getName()+"§e Gemstone");
+												player.sendMessage("Â§e"+p.getName()+" just infused a "+r.getName()+" "+gem.getColour()+gem.getName()+"Â§e Gemstone");
 											}
 										}
 										ItemStack dropGem = getInfusedGem(gem, b.getCurrentItems().size(), r);
-										p.getWorld().dropItem(b.getParticleLocation(), dropGem);
+										Location dropLocation = b.getLocation().clone().add(0.5, 1.1, 0.5); // Center-top of the block
+										Item dropped = p.getWorld().dropItem(dropLocation, dropGem);
+
+										// Random upward and outward velocity
+										Vector velocity = new Vector(
+											(Math.random() - 0.5) * 0.2,  // X: between -0.3 and +0.3
+											0.2 + Math.random() * 0.2,    // Y: between 0.2 and 0.4
+											(Math.random() - 0.5) * 0.2   // Z: between -0.3 and +0.3
+										);
+										dropped.setVelocity(velocity);
 										p.getWorld().playSound(p.getLocation(), Sound.ENTITY_GLOW_ITEM_FRAME_REMOVE_ITEM, 1f, 1f);
 										b.getLocation().getWorld().spawnParticle(Particle.FLAME, b.getParticleLocation(), 20);
 									} else {
