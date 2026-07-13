@@ -5,6 +5,7 @@ version: 1.0
 author: Drefvelin
 
 depend: [MMOItems, MythicLib]
+softdepend: [TLibs]
 
 commands:
   geminfusion:

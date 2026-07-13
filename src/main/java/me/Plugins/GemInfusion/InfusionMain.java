@@ -1,5 +1,6 @@
 package me.Plugins.GemInfusion;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -15,15 +16,21 @@ public class InfusionMain extends JavaPlugin{
 	@Override
 	public void onEnable(){
 		plugin = this;
-		
+
+		saveDefaultConfig();
+		reloadConfig();
+		config = getConfig();
 		loader.loadConfig(config);
-		
+
 		getServer().getPluginManager().registerEvents(events, this);
+		if (Bukkit.getPluginManager().getPlugin("TLibs") != null) {
+			getServer().getPluginManager().registerEvents(new GemSocketRebuildListener(), this);
+			getServer().getPluginManager().registerEvents(new GemUnsocketSnapshotListener(), this);
+		}
 		getCommand(commands.cmd1).setExecutor(commands);
 	}
 	public void reloadConfigCommand() {
-		ConfigLoader.loadedGems.clear();
-		ConfigLoader.loadedRarities.clear();
+		reloadConfig();
 		config = getConfig();
 		loader.loadConfig(config);
 	}

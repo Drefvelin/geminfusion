@@ -10,7 +10,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -18,22 +17,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import io.lumine.mythic.lib.api.item.NBTItem;
 import net.Indyuce.mmoitems.ItemStats;
 import net.Indyuce.mmoitems.MMOItems;
-import net.Indyuce.mmoitems.api.item.mmoitem.LiveMMOItem;
 import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
-import net.Indyuce.mmoitems.stat.data.DoubleData;
-import net.Indyuce.mmoitems.stat.data.StringData;
-import net.Indyuce.mmoitems.stat.data.StringListData;
-import net.Indyuce.mmoitems.stat.type.NameData;
-import net.Indyuce.mmoitems.stat.type.StatHistory;
 
 
 public class InfusionEvents implements Listener{
@@ -206,76 +197,6 @@ public class InfusionEvents implements Listener{
 	}
 	
 	public ItemStack getInfusedGem(Gemstone gem, Integer amount, GemRarity r) {
-		ItemStack blankGem = gem.getMMOItem().newBuilder().build();
-		MMOItem infusedGem = new LiveMMOItem(NBTItem.get(blankGem));
-		for(GemStat s : gem.getStats()) {
-			if(!s.getId().equalsIgnoreCase(r.getId())) continue;
-			List<String> usedStats = new ArrayList<String>();
-			if(r.getMaxStats() == -1) {
-				usedStats = s.getStats();
-			} else {
-				if(s.getStats().size() < r.getMinStats()) {
-					usedStats = s.getStats();
-				} else {
-					while(usedStats.size() < r.getMinStats()) {
-						Collections.shuffle(s.getStats());
-						if(!usedStats.contains(s.getStats().get(0))) {
-							usedStats.add(s.getStats().get(0));
-						}
-					}
-				}
-				for(String stat : s.getStats()) {
-					if(usedStats.size() < r.getMaxStats()) {
-						if(Math.random() < 0.5) {
-							if(!usedStats.contains(stat)) {
-								usedStats.add(stat);
-							}
-						}
-					}
-				}
-			}
-			for(String statString : usedStats) {
-				String statType = statString.split("\\(")[0];
-				Double minAmount = 10000 * Double.parseDouble(statString.split("\\(")[1].split("\\-")[0]);
-				Double maxAmount = 10000 * Double.parseDouble(statString.split("\\(")[1].split("\\-")[1].replace(")", ""));
-				Double statAmount = Math.floor(Math.random()*(maxAmount-minAmount)+minAmount);
-				statAmount = statAmount/10000;
-				DoubleData stat = new DoubleData(statAmount);
-				infusedGem.setData(MMOItems.plugin.getStats().get(statType.toUpperCase()), stat);
-			}
-		}
-		Double maxChance = 60.0-amount;
-		if(maxChance < 0.0 ) {
-			maxChance = 0.0;
-		}
-		DoubleData successChance = new DoubleData(Math.floor(Math.random()*maxChance)+40);
-		infusedGem.setData(ItemStats.SUCCESS_RATE, successChance);
-		infusedGem.setData(ItemStats.DISPLAYED_TYPE, new StringData("Infused Gemstone"));
-		StringData itemName = (StringData) infusedGem.getData(ItemStats.NAME);
-		itemName.setString(r.getName()+" "+"Infused " + gem.getName());
-		infusedGem.replaceData(ItemStats.NAME, itemName);
-		StatHistory hist = StatHistory.from(infusedGem, ItemStats.NAME);
-		if (hist != null) {
-            NameData og = (NameData) hist.getOriginalData();
-            og.setString(r.getName()+" "+"Infused " + gem.getName());
-            infusedGem.setStatHistory(ItemStats.NAME, hist);
-        }
-		System.out.println("1");
-		infusedGem.setData(ItemStats.GEM_COLOR, new StringData(gem.getSocketColour()));
-		List<String> loreList = new ArrayList<String>();
-		loreList.add(ChatColor.GRAY + "Gemstone Type: " + gem.getSocketNameColour() + gem.getSocketColour());
-		loreList.add(ChatColor.GRAY + "Rarity: " + r.getName());
-		System.out.println("2");
-		StringListData lore = new StringListData(loreList);
-		System.out.println("3");
-		infusedGem.setData(ItemStats.LORE, lore);
-		System.out.println("4");
-		ItemStack finalItem = infusedGem.newBuilder().build();
-		System.out.println("5");
-		ItemMeta meta = finalItem.getItemMeta();
-		meta.addEnchant(Enchantment.DURABILITY, 1, true);
-		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-		finalItem.setItemMeta(meta);
-		return finalItem;
+		return InfusedGemBuilder.buildInfusedGem(gem, r, amount);
 	}
 }

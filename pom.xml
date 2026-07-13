@@ -6,7 +6,7 @@
 
     <groupId>me.plugins</groupId>
     <artifactId>geminfusion</artifactId>
-    <version>2.1</version>
+    <version>2.2</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -34,6 +34,13 @@
             <version>1.20.2-R0.1-SNAPSHOT</version>
             <scope>system</scope>
             <systemPath>D:/Dokumenter/My Plugins/Reference Libs/spigot-api-1.20.2-R0.1-SNAPSHOT.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>local</groupId>
+            <artifactId>TLibs</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>D:/Dokumenter/My Plugins/TFMC/TLibs/TLibs.jar</systemPath>
         </dependency>
     </dependencies>
 

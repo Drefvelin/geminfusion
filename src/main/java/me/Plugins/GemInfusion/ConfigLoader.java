@@ -17,6 +17,11 @@ public class ConfigLoader {
 	public static String infusionStaff;
 	
 	public void loadConfig(FileConfiguration config) {
+		loadedGems.clear();
+		loadedRarities.clear();
+		stations.clear();
+		locations.clear();
+
 		useLocations = config.getBoolean("location_specific");
 		infusionStaff = config.getString("infusion_item");
 		for(String s : config.getStringList("locations")) {
@@ -63,5 +68,37 @@ public class ConfigLoader {
 			gem.addStat(new GemStat(id, config.getConfigurationSection("gems."+key+".rarities."+id)));
 		}
 		return gem;
+	}
+
+	public static Gemstone findGemByMmoItem(String type, String id) {
+		if (type == null || id == null) {
+			return null;
+		}
+		for (Gemstone gem : loadedGems) {
+			String mmo = gem.getMMOItemString();
+			if (mmo == null) {
+				continue;
+			}
+			String[] parts = mmo.split("\\.");
+			if (parts.length < 2) {
+				continue;
+			}
+			if (parts[0].equalsIgnoreCase(type) && parts[1].equalsIgnoreCase(id)) {
+				return gem;
+			}
+		}
+		return null;
+	}
+
+	public static GemRarity findRarityById(String id) {
+		if (id == null) {
+			return null;
+		}
+		for (GemRarity rarity : loadedRarities) {
+			if (rarity.getId().equalsIgnoreCase(id)) {
+				return rarity;
+			}
+		}
+		return null;
 	}
 }
