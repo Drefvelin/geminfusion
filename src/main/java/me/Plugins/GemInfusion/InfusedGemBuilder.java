@@ -1,11 +1,12 @@
 package me.Plugins.GemInfusion;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -18,6 +19,7 @@ import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
 import net.Indyuce.mmoitems.stat.data.DoubleData;
 import net.Indyuce.mmoitems.stat.data.StringData;
 import net.Indyuce.mmoitems.stat.data.StringListData;
+import net.Indyuce.mmoitems.stat.type.ItemStat;
 import net.Indyuce.mmoitems.stat.type.NameData;
 import net.Indyuce.mmoitems.stat.type.StatHistory;
 
@@ -25,42 +27,26 @@ public final class InfusedGemBuilder {
 	private InfusedGemBuilder() {
 	}
 
-	public static void rollStats(MMOItem mmo, Gemstone gem, GemRarity rarity, int infusionAmount) {
+	public static void rollStats(MMOItem mmo, Gemstone gem, GemRarity rarity, int infusionAmount, Player player) {
+		GemStat block = null;
 		for (GemStat statBlock : gem.getStats()) {
-			if (!statBlock.getId().equalsIgnoreCase(rarity.getId())) {
-				continue;
+			if (statBlock.getId().equalsIgnoreCase(rarity.getId())) {
+				block = statBlock;
+				break;
 			}
-			List<String> usedStats = new ArrayList<>();
-			if (rarity.getMaxStats() == -1) {
-				usedStats = statBlock.getStats();
+		}
+		if (block != null) {
+			ItemStat<?, ?> stat = MMOItems.plugin.getStats().get(block.getStatId().toUpperCase());
+			if (stat == null) {
+				warn("Unknown MMOItems stat '" + block.getStatId() + "' on gem '" + gem.getId()
+						+ "' rarity '" + rarity.getId() + "', skipping stat write.");
 			} else {
-				if (statBlock.getStats().size() < rarity.getMinStats()) {
-					usedStats = statBlock.getStats();
-				} else {
-					while (usedStats.size() < rarity.getMinStats()) {
-						Collections.shuffle(statBlock.getStats());
-						if (!usedStats.contains(statBlock.getStats().get(0))) {
-							usedStats.add(statBlock.getStats().get(0));
-						}
-					}
-				}
-				for (String stat : statBlock.getStats()) {
-					if (usedStats.size() < rarity.getMaxStats()) {
-						if (Math.random() < 0.5) {
-							if (!usedStats.contains(stat)) {
-								usedStats.add(stat);
-							}
-						}
-					}
-				}
-			}
-			for (String statString : usedStats) {
-				String statType = statString.split("\\(")[0];
-				double minAmount = 10000 * Double.parseDouble(statString.split("\\(")[1].split("\\-")[0]);
-				double maxAmount = 10000
-						* Double.parseDouble(statString.split("\\(")[1].split("\\-")[1].replace(")", ""));
+				double minAmount = 10000 * block.getMin();
+				double maxAmount = 10000 * block.getMax();
 				double statAmount = Math.floor(Math.random() * (maxAmount - minAmount) + minAmount) / 10000;
-				mmo.setData(MMOItems.plugin.getStats().get(statType.toUpperCase()), new DoubleData(statAmount));
+				double delta = AttributeInfluence.infusion.forPlayer(player);
+				statAmount = Math.floor(statAmount * (1.0 + delta) * 10000) / 10000;
+				mmo.setData(stat, new DoubleData(statAmount));
 			}
 		}
 
@@ -106,10 +92,10 @@ public final class InfusedGemBuilder {
 		return finalizeItem(mmo.newBuilder().build(), rarity.getId());
 	}
 
-	public static ItemStack buildInfusedGem(Gemstone gem, GemRarity rarity, int infusionAmount) {
+	public static ItemStack buildInfusedGem(Gemstone gem, GemRarity rarity, int infusionAmount, Player player) {
 		ItemStack blankGem = gem.getMMOItem().newBuilder().build();
 		MMOItem infusedGem = new LiveMMOItem(NBTItem.get(blankGem));
-		rollStats(infusedGem, gem, rarity, infusionAmount);
+		rollStats(infusedGem, gem, rarity, infusionAmount, player);
 		applyCosmetics(infusedGem, gem, rarity);
 		return finalizeItem(infusedGem.newBuilder().build(), rarity.getId());
 	}
@@ -127,5 +113,12 @@ public final class InfusedGemBuilder {
 		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 		item.setItemMeta(meta);
 		return item;
+	}
+
+	private static void warn(String message) {
+		Logger logger = InfusionMain.plugin == null
+				? Logger.getLogger("GemInfusion")
+				: InfusionMain.plugin.getLogger();
+		logger.warning(message);
 	}
 }

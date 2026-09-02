@@ -42,6 +42,8 @@ public class ConfigLoader {
 		for(String key : rarityList) {
 			loadedRarities.add(new GemRarity(key, config.getConfigurationSection("rarities."+key)));
 		}
+		AttributeInfluence.infusion = AttributeInfluence.from(config.getConfigurationSection("attribute-influence"), "intelligence");
+		AttributeInfluence.jewelry = AttributeInfluence.from(config.getConfigurationSection("jewelry-attribute-influence"), "dexterity");
 	}
 	public Gemstone getGemFromConfig(FileConfiguration config, String key) {
 		Gemstone gem = new Gemstone();
@@ -65,7 +67,10 @@ public class ConfigLoader {
 
 		List<String> list = new ArrayList<String>(set);
 		for(String id : list) {
-			gem.addStat(new GemStat(id, config.getConfigurationSection("gems."+key+".rarities."+id)));
+			GemStat stat = GemStat.parse(key, id, config.getConfigurationSection("gems."+key+".rarities."+id));
+			if (stat != null) {
+				gem.addStat(stat);
+			}
 		}
 		return gem;
 	}

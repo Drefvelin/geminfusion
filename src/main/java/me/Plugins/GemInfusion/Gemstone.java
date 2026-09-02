@@ -49,7 +49,9 @@ public class Gemstone {
 		this.stats = list;
 	}
 	public void addStat(GemStat stat) {
-		this.stats.add(stat);
+		if (stat != null) {
+			this.stats.add(stat);
+		}
 	}
 	
 	//Getters

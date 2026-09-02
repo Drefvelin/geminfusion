@@ -6,28 +6,37 @@ locations:
 
 infusion_item: loot.infusion_token
 
+# Intelligence nudges the rolled gem stat (not rarity odds). 0.2 = 20% of the rolled value.
+attribute-influence:
+  mmocore-id: intelligence
+  floor: 0
+  neutral: 10
+  full: 20
+  max-bonus: 0.2
+  max-penalty: 0.2
+
+# Dexterity nudges the jewelry stat copied from the consumed gem. Independent of infusion Intelligence.
+jewelry-attribute-influence:
+  mmocore-id: dexterity
+  floor: 0
+  neutral: 10
+  full: 20
+  max-bonus: 0.2
+  max-penalty: 0.2
 
 rarities:
     common:
         name: "§aCommon"
         chance: 65
-        min-stats: 1
-        max-stats: 1
     rare:
         name: "§9Rare"
         chance: 25
-        min-stats: 1
-        max-stats: 2
     epic:
         name: "§5Epic"
         chance: 7
-        min-stats: 2
-        max-stats: 3
     legendary:
         name: "§6Legendary"
         chance: 3
-        min-stats: 3
-        max-stats: -1
         announce: true
 gems:
     agate:
@@ -40,23 +49,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - max_health(0.5-0.5)
+                stat: max_health
+                min: 0.5
+                max: 0.5
             rare:
-                stats:
-                    - max_health(0.6-0.7)
-                    - pvp_damage_reduction(0.6-0.7)
+                stat: max_health
+                min: 0.6
+                max: 0.7
             epic:
-                stats:
-                    - max_health(0.7-0.8)
-                    - pvp_damage_reduction(0.7-0.8)
-                    - dodge_rating(0.7-0.8)
+                stat: max_health
+                min: 0.7
+                max: 0.8
             legendary:
-                stats:
-                    - max_health(0.9-1)
-                    - pvp_damage_reduction(0.9-1)
-                    - dodge_rating(0.9-1)
-                    - pve_damage_reduction(1.5-2)
+                stat: max_health
+                min: 0.9
+                max: 1
     jasper:
         gem: gemstones.jasper
         name: "Jasper"
@@ -65,23 +72,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - pvp_damage_reduction(1-1.2)
+                stat: pvp_damage_reduction
+                min: 1
+                max: 1.2
             rare:
-                stats:
-                    - pvp_damage_reduction(1.3-1.5)
-                    - max_health(0.1-0.2)
+                stat: pvp_damage_reduction
+                min: 1.3
+                max: 1.5
             epic:
-                stats:
-                    - pvp_damage_reduction(1.6-1.8)
-                    - max_health(0.3-0.4)
-                    - dodge_rating(0.7-0.8)
+                stat: pvp_damage_reduction
+                min: 1.6
+                max: 1.8
             legendary:
-                stats:
-                    - pvp_damage_reduction(1.9-2)
-                    - max_health(0.5-0.5)
-                    - dodge_rating(0.9-1)
-                    - parry_rating(0.9-1)
+                stat: pvp_damage_reduction
+                min: 1.9
+                max: 2
     onyx:
         gem: gemstones.onyx
         name: "Onyx"
@@ -90,23 +95,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - pve_damage_reduction(2-2.5)
+                stat: pve_damage_reduction
+                min: 2
+                max: 2.5
             rare:
-                stats:
-                    - pve_damage_reduction(2.6-3.0)
-                    - max_health(0.1-0.2)
+                stat: pve_damage_reduction
+                min: 2.6
+                max: 3.0
             epic:
-                stats:
-                    - pve_damage_reduction(3.1-1.5)
-                    - max_health(0.3-0.4)
-                    - parry_rating(0.7-0.8)
+                stat: pve_damage_reduction
+                min: 3.1
+                max: 1.5
             legendary:
-                stats:
-                    - pve_damage_reduction(3.6-4)
-                    - max_health(0.5-0.5)
-                    - parry_rating(0.9-1)
-                    - dodge_rating(0.9-1)
+                stat: pve_damage_reduction
+                min: 3.6
+                max: 4
     tourmaline:
         gem: gemstones.tourmaline
         name: "Tourmaline"
@@ -115,23 +118,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - dodge_rating(1-1.2)
+                stat: dodge_rating
+                min: 1
+                max: 1.2
             rare:
-                stats:
-                    - dodge_rating(1.3-1.5)
-                    - max_health(0.1-0.2)
+                stat: dodge_rating
+                min: 1.3
+                max: 1.5
             epic:
-                stats:
-                    - dodge_rating(1.6-1.8)
-                    - max_health(0.3-0.4)
-                    - pvp_damage_reduction(0.7-0.8)
+                stat: dodge_rating
+                min: 1.6
+                max: 1.8
             legendary:
-                stats:
-                    - dodge_rating(1.9-2)
-                    - max_health(0.5-0.5)
-                    - pvp_damage_reduction(0.9-1)
-                    - pve_damage_reduction(1.6-2)
+                stat: dodge_rating
+                min: 1.9
+                max: 2
     pearl:
         gem: gemstones.pearl
         name: "Pearl"
@@ -140,23 +141,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - parry_rating(1-1.2)
+                stat: parry_rating
+                min: 1
+                max: 1.2
             rare:
-                stats:
-                    - parry_rating(1.3-1.5)
-                    - max_health(0.1-0.2)
+                stat: parry_rating
+                min: 1.3
+                max: 1.5
             epic:
-                stats:
-                    - parry_rating(1.6-1.8)
-                    - max_health(0.3-0.4)
-                    - pve_damage_reduction(1-1.5)
+                stat: parry_rating
+                min: 1.6
+                max: 1.8
             legendary:
-                stats:
-                    - parry_rating(1.9-2)
-                    - max_health(0.5-0.5)
-                    - pve_damage_reduction(1.6-2)
-                    - pvp_damage_reduction(0.9-1)
+                stat: parry_rating
+                min: 1.9
+                max: 2
     coral:
         gem: gemstones.coral
         name: "Coral"
@@ -165,23 +164,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - pvp_damage(1-1.2)
+                stat: pvp_damage
+                min: 1
+                max: 1.2
             rare:
-                stats:
-                    - pvp_damage(1.3-1.5)
-                    - physical_damage(0.5-0.6)
+                stat: pvp_damage
+                min: 1.3
+                max: 1.5
             epic:
-                stats:
-                    - pvp_damage(1.6-1.8)
-                    - physical_damage(0.7-0.8)
-                    - lifesteal(0.7-0.8)
+                stat: pvp_damage
+                min: 1.6
+                max: 1.8
             legendary:
-                stats:
-                    - pvp_damage(1.9-2)
-                    - physical_damage(0.9-1)
-                    - lifesteal(0.9-1)
-                    - projectile_damage(0.9-1)
+                stat: pvp_damage
+                min: 1.9
+                max: 2
     chrysoprase:
         gem: gemstones.chrysoprase
         name: "Chrysoprase"
@@ -190,23 +187,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - pve_damage(2-2.5)
+                stat: pve_damage
+                min: 2
+                max: 2.5
             rare:
-                stats:
-                    - pve_damage(2.6-3)
-                    - physical_damage(0.5-0.6)
+                stat: pve_damage
+                min: 2.6
+                max: 3
             epic:
-                stats:
-                    - pve_damage(3.1-3.5)
-                    - physical_damage(0.7-0.8)
-                    - lifesteal(0.7-0.8)
+                stat: pve_damage
+                min: 3.1
+                max: 3.5
             legendary:
-                stats:
-                    - pve_damage(3.6-4)
-                    - physical_damage(0.9-1)
-                    - lifesteal(0.9-1)
-                    - projectile_damage(0.9-1)
+                stat: pve_damage
+                min: 3.6
+                max: 4
     larimar:
         gem: gemstones.larimar
         name: "Larimar"
@@ -215,23 +210,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - physical_damage(1-1.2)
+                stat: physical_damage
+                min: 1
+                max: 1.2
             rare:
-                stats:
-                    - physical_damage(1.3-1.5)
-                    - pve_damage(0.5-1)
+                stat: physical_damage
+                min: 1.3
+                max: 1.5
             epic:
-                stats:
-                    - physical_damage(1.6-1.8)
-                    - pve_damage(1.1-1.5)
-                    - pvp_damage(0.7-0.8)
+                stat: physical_damage
+                min: 1.6
+                max: 1.8
             legendary:
-                stats:
-                    - physical_damage(1.9-2)
-                    - pve_damage(1.6-2)
-                    - pvp_damage(0.9-1)
-                    - lifesteal(0.9-1)
+                stat: physical_damage
+                min: 1.9
+                max: 2
     rhodonite:
         gem: gemstones.rhodonite
         name: "Rhodonite"
@@ -240,23 +233,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - projectile_damage(1-1.2)
+                stat: projectile_damage
+                min: 1
+                max: 1.2
             rare:
-                stats:
-                    - projectile_damage(1.3-1.5)
-                    - pve_damage(0.5-1)
+                stat: projectile_damage
+                min: 1.3
+                max: 1.5
             epic:
-                stats:
-                    - projectile_damage(1.6-1.8)
-                    - pve_damage(1.1-1.5)
-                    - pvp_damage(0.7-0.8)
+                stat: projectile_damage
+                min: 1.6
+                max: 1.8
             legendary:
-                stats:
-                    - projectile_damage(1.9-2)
-                    - pve_damage(1.6-2)
-                    - pvp_damage(0.9-1)
-                    - lifesteal(0.9-1)
+                stat: projectile_damage
+                min: 1.9
+                max: 2
     vesuvianite:
         gem: gemstones.vesuvianite
         name: "Vesuvianite"
@@ -265,23 +256,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - lifesteal(1-1.2)
+                stat: lifesteal
+                min: 1
+                max: 1.2
             rare:
-                stats:
-                    - lifesteal(1.3-1.5)
-                    - pvp_damage(0.5-0.6)
+                stat: lifesteal
+                min: 1.3
+                max: 1.5
             epic:
-                stats:
-                    - lifesteal(1.6-1.8)
-                    - pvp_damage(0.7-0.8)
-                    - pve_damage(1.1-1.5)
+                stat: lifesteal
+                min: 1.6
+                max: 1.8
             legendary:
-                stats:
-                    - lifesteal(1.9-2)
-                    - pvp_damage(0.9-1)
-                    - pve_damage(1.6-2)
-                    - projectile_damage(0.9-1)
+                stat: lifesteal
+                min: 1.9
+                max: 2
     turquoise:
         gem: gemstones.turquoise
         name: "Turquoise"
@@ -290,23 +279,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - max_health(1-1)
+                stat: max_health
+                min: 1
+                max: 1
             rare:
-                stats:
-                    - max_health(1.1-1.2)
-                    - pvp_damage_reduction(1-5-1.6)
+                stat: max_health
+                min: 1.1
+                max: 1.2
             epic:
-                stats:
-                    - max_health(1.3-1.4)
-                    - pvp_damage_reduction(1.7-1.8)
-                    - dodge_rating(1.7-1.8)
+                stat: max_health
+                min: 1.3
+                max: 1.4
             legendary:
-                stats:
-                    - max_health(1.5-1.5)
-                    - pvp_damage_reduction(1.9-2)
-                    - dodge_rating(1.9-2)
-                    - pve_damage_reduction(2.6-3)
+                stat: max_health
+                min: 1.5
+                max: 1.5
     peridot:
         gem: gemstones.peridot
         name: "Peridot"
@@ -315,23 +302,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - pvp_damage_reduction(2-2.2)
+                stat: pvp_damage_reduction
+                min: 2
+                max: 2.2
             rare:
-                stats:
-                    - pvp_damage_reduction(2.3-2.5)
-                    - max_health(0.6-0.7)
+                stat: pvp_damage_reduction
+                min: 2.3
+                max: 2.5
             epic:
-                stats:
-                    - pvp_damage_reduction(2.6-2.8)
-                    - max_health(0.8-0.9)
-                    - dodge_rating(1.7-1.8)
+                stat: pvp_damage_reduction
+                min: 2.6
+                max: 2.8
             legendary:
-                stats:
-                    - pvp_damage_reduction(2.9-3)
-                    - max_health(1-1)
-                    - dodge_rating(1.9-2)
-                    - parry_rating(1.9-2)
+                stat: pvp_damage_reduction
+                min: 2.9
+                max: 3
     malachite:
         gem: gemstones.malachite
         name: "Malachite"
@@ -340,23 +325,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - pve_damage_reduction(3-3.7)
+                stat: pve_damage_reduction
+                min: 3
+                max: 3.7
             rare:
-                stats:
-                    - pve_damage_reduction(3.8-4.5)
-                    - max_health(0.6-0.7)
+                stat: pve_damage_reduction
+                min: 3.8
+                max: 4.5
             epic:
-                stats:
-                    - pve_damage_reduction(4.6-5.3)
-                    - max_health(0.8-0.9)
-                    - parry_rating(1.7-1.8)
+                stat: pve_damage_reduction
+                min: 4.6
+                max: 5.3
             legendary:
-                stats:
-                    - pve_damage_reduction(5.4-6)
-                    - max_health(1-1)
-                    - parry_rating(1.9-2)
-                    - dodge_rating(1.9-2)
+                stat: pve_damage_reduction
+                min: 5.4
+                max: 6
     zircon:
         gem: gemstones.zircon
         name: "Zircon"
@@ -365,23 +348,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - dodge_rating(2-2.2)
+                stat: dodge_rating
+                min: 2
+                max: 2.2
             rare:
-                stats:
-                    - dodge_rating(2.3-2.5)
-                    - max_health(0.6-0.7)
+                stat: dodge_rating
+                min: 2.3
+                max: 2.5
             epic:
-                stats:
-                    - dodge_rating(2.6-2.8)
-                    - max_health(0.8-0.9)
-                    - pvp_damage_reduction(1.7-1.8)
+                stat: dodge_rating
+                min: 2.6
+                max: 2.8
             legendary:
-                stats:
-                    - dodge_rating(2.9-3)
-                    - max_health(1-1)
-                    - pvp_damage_reduction(1.9-2)
-                    - pve_damage_reduction(2.6-3)
+                stat: dodge_rating
+                min: 2.9
+                max: 3
     apatite:
         gem: gemstones.apatite
         name: "Apatite"
@@ -390,23 +371,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - parry_rating(2-2.2)
+                stat: parry_rating
+                min: 2
+                max: 2.2
             rare:
-                stats:
-                    - parry_rating(2.3-2.5)
-                    - max_health(0.6-0.7)
+                stat: parry_rating
+                min: 2.3
+                max: 2.5
             epic:
-                stats:
-                    - parry_rating(2.6-2.8)
-                    - max_health(0.8-0.9)
-                    - pve_damage_reduction(2-2.5)
+                stat: parry_rating
+                min: 2.6
+                max: 2.8
             legendary:
-                stats:
-                    - parry_rating(2.9-3)
-                    - max_health(1-1)
-                    - pve_damage_reduction(2.6-3)
-                    - pvp_damage_reduction(1.9-2)
+                stat: parry_rating
+                min: 2.9
+                max: 3
     carnelian:
         gem: gemstones.carnelian
         name: "Carnelian"
@@ -415,23 +394,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - pvp_damage(2-2.2)
+                stat: pvp_damage
+                min: 2
+                max: 2.2
             rare:
-                stats:
-                    - pvp_damage(2.3-2.5)
-                    - physical_damage(1.5-1.6)
+                stat: pvp_damage
+                min: 2.3
+                max: 2.5
             epic:
-                stats:
-                    - pvp_damage(2.6-2.8)
-                    - physical_damage(1.7-1.8)
-                    - lifesteal(1.7-1.8)
+                stat: pvp_damage
+                min: 2.6
+                max: 2.8
             legendary:
-                stats:
-                    - pvp_damage(2.9-3)
-                    - physical_damage(1.9-2)
-                    - lifesteal(1.9-2)
-                    - projectile_damage(1.9-2)
+                stat: pvp_damage
+                min: 2.9
+                max: 3
     labradorite:
         gem: gemstones.labradorite
         name: "Labradorite"
@@ -440,23 +417,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - pve_damage(3-3.7)
+                stat: pve_damage
+                min: 3
+                max: 3.7
             rare:
-                stats:
-                    - pve_damage(3.8-4.5)
-                    - physical_damage(1.5-1.6)
+                stat: pve_damage
+                min: 3.8
+                max: 4.5
             epic:
-                stats:
-                    - pve_damage(4.6-5.3)
-                    - physical_damage(1.7-1.8)
-                    - lifesteal(1.7-1.8)
+                stat: pve_damage
+                min: 4.6
+                max: 5.3
             legendary:
-                stats:
-                    - pve_damage(5.4-6)
-                    - physical_damage(1.9-2)
-                    - lifesteal(1.9-2)
-                    - projectile_damage(1.9-2)
+                stat: pve_damage
+                min: 5.4
+                max: 6
     sardonyx:
         gem: gemstones.sardonyx
         name: "Sardonyx"
@@ -465,23 +440,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - physical_damage(2-2.2)
+                stat: physical_damage
+                min: 2
+                max: 2.2
             rare:
-                stats:
-                    - physical_damage(2.3-2.5)
-                    - pve_damage(1.5-2)
+                stat: physical_damage
+                min: 2.3
+                max: 2.5
             epic:
-                stats:
-                    - physical_damage(2.6-2.8)
-                    - pve_damage(2.1-2.5)
-                    - pvp_damage(1.7-1.8)
+                stat: physical_damage
+                min: 2.6
+                max: 2.8
             legendary:
-                stats:
-                    - physical_damage(2.9-3)
-                    - pve_damage(2.6-3)
-                    - pvp_damage(1.9-2)
-                    - lifesteal(1.9-2)
+                stat: physical_damage
+                min: 2.9
+                max: 3
     variscite:
         gem: gemstones.variscite
         name: "Variscite"
@@ -490,23 +463,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - projectile_damage(2-2.2)
+                stat: projectile_damage
+                min: 2
+                max: 2.2
             rare:
-                stats:
-                    - projectile_damage(2.3-2.5)
-                    - pve_damage(1.5-2)
+                stat: projectile_damage
+                min: 2.3
+                max: 2.5
             epic:
-                stats:
-                    - projectile_damage(2.6-2.8)
-                    - pve_damage(2.1-2.5)
-                    - pvp_damage(1.7-1.8)
+                stat: projectile_damage
+                min: 2.6
+                max: 2.8
             legendary:
-                stats:
-                    - projectile_damage(2.9-3)
-                    - pve_damage(2.6-3)
-                    - pvp_damage(1.9-2)
-                    - lifesteal(1.9-2)
+                stat: projectile_damage
+                min: 2.9
+                max: 3
     wulfenite:
         gem: gemstones.wulfenite
         name: "Wulfenite"
@@ -515,23 +486,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - lifesteal(2-2.2)
+                stat: lifesteal
+                min: 2
+                max: 2.2
             rare:
-                stats:
-                    - lifesteal(2.3-2.5)
-                    - pvp_damage(1.5-1.6)
+                stat: lifesteal
+                min: 2.3
+                max: 2.5
             epic:
-                stats:
-                    - lifesteal(2.6-2.8)
-                    - pvp_damage(1.7-1.8)
-                    - pve_damage(2.1-2.5)
+                stat: lifesteal
+                min: 2.6
+                max: 2.8
             legendary:
-                stats:
-                    - lifesteal(2.9-3)
-                    - pvp_damage(1.9-2)
-                    - pve_damage(2.6-3)
-                    - projectile_damage(1.9-2)
+                stat: lifesteal
+                min: 2.9
+                max: 3
     aquamarine:
         gem: gemstones.aquamarine
         name: "Aquamarine"
@@ -540,23 +509,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - max_health(1.5-1.5)
+                stat: max_health
+                min: 1.5
+                max: 1.5
             rare:
-                stats:
-                    - max_health(1.6-1.7)
-                    - pvp_damage_reduction(2-5-2.6)
+                stat: max_health
+                min: 1.6
+                max: 1.7
             epic:
-                stats:
-                    - max_health(1.8-1.9)
-                    - pvp_damage_reduction(2.7-2.8)
-                    - dodge_rating(2.7-2.8)
+                stat: max_health
+                min: 1.8
+                max: 1.9
             legendary:
-                stats:
-                    - max_health(2-2)
-                    - pvp_damage_reduction(2.9-3)
-                    - dodge_rating(2.9-3)
-                    - pve_damage_reduction(3.1-4)
+                stat: max_health
+                min: 2
+                max: 2
     garnet:
         gem: gemstones.garnet
         name: "Garnet"
@@ -565,23 +532,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - pvp_damage_reduction(3-3.2)
+                stat: pvp_damage_reduction
+                min: 3
+                max: 3.2
             rare:
-                stats:
-                    - pvp_damage_reduction(3.3-3.5)
-                    - max_health(1.1-1.2)
+                stat: pvp_damage_reduction
+                min: 3.3
+                max: 3.5
             epic:
-                stats:
-                    - pvp_damage_reduction(3.6-3.8)
-                    - max_health(1.3-1.4)
-                    - dodge_rating(2.7-2.8)
+                stat: pvp_damage_reduction
+                min: 3.6
+                max: 3.8
             legendary:
-                stats:
-                    - pvp_damage_reduction(3.9-4)
-                    - max_health(1.5-1.5)
-                    - dodge_rating(2.9-3)
-                    - parry_rating(2.9-3)
+                stat: pvp_damage_reduction
+                min: 3.9
+                max: 4
     opal:
         gem: gemstones.opal
         name: "Opal"
@@ -590,23 +555,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - pve_damage_reduction(4-5)
+                stat: pve_damage_reduction
+                min: 4
+                max: 5
             rare:
-                stats:
-                    - pve_damage_reduction(5.1-6)
-                    - max_health(1.1-1.2)
+                stat: pve_damage_reduction
+                min: 5.1
+                max: 6
             epic:
-                stats:
-                    - pve_damage_reduction(6.1-7)
-                    - max_health(1.3-1.4)
-                    - parry_rating(2.7-2.8)
+                stat: pve_damage_reduction
+                min: 6.1
+                max: 7
             legendary:
-                stats:
-                    - pve_damage_reduction(7.1-8)
-                    - max_health(1.5-1.5)
-                    - parry_rating(2.9-3)
-                    - dodge_rating(2.9-3)
+                stat: pve_damage_reduction
+                min: 7.1
+                max: 8
     tanzanite:
         gem: gemstones.tanzanite
         name: "Tanzanite"
@@ -615,23 +578,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - dodge_rating(3-3.2)
+                stat: dodge_rating
+                min: 3
+                max: 3.2
             rare:
-                stats:
-                    - dodge_rating(3.3-3.5)
-                    - max_health(1.1-1.2)
+                stat: dodge_rating
+                min: 3.3
+                max: 3.5
             epic:
-                stats:
-                    - dodge_rating(3.6-3.8)
-                    - max_health(1.3-1.4)
-                    - pvp_damage_reduction(2.7-2.8)
+                stat: dodge_rating
+                min: 3.6
+                max: 3.8
             legendary:
-                stats:
-                    - dodge_rating(3.9-4)
-                    - max_health(1.5-1.5)
-                    - pvp_damage_reduction(2.9-3)
-                    - pve_damage_reduction(3.1-4)
+                stat: dodge_rating
+                min: 3.9
+                max: 4
     moonstone:
         gem: gemstones.moonstone
         name: "Moonstone"
@@ -640,23 +601,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - parry_rating(3-3.2)
+                stat: parry_rating
+                min: 3
+                max: 3.2
             rare:
-                stats:
-                    - parry_rating(3.3-3.5)
-                    - max_health(1.1-1.2)
+                stat: parry_rating
+                min: 3.3
+                max: 3.5
             epic:
-                stats:
-                    - parry_rating(3.6-3.8)
-                    - max_health(1.3-1.4)
-                    - pve_damage_reduction(2.1-3)
+                stat: parry_rating
+                min: 3.6
+                max: 3.8
             legendary:
-                stats:
-                    - parry_rating(3.9-4)
-                    - max_health(1.5-1.5)
-                    - pve_damage_reduction(3.1-4)
-                    - pvp_damage_reduction(2.9-3)
+                stat: parry_rating
+                min: 3.9
+                max: 4
     sunstone:
         gem: gemstones.sunstone
         name: "Sunstone"
@@ -665,23 +624,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - pvp_damage(3-3.2)
+                stat: pvp_damage
+                min: 3
+                max: 3.2
             rare:
-                stats:
-                    - pvp_damage(3.3-3.5)
-                    - physical_damage(2.5-2.6)
+                stat: pvp_damage
+                min: 3.3
+                max: 3.5
             epic:
-                stats:
-                    - pvp_damage(3.6-3.8)
-                    - physical_damage(2.7-2.8)
-                    - lifesteal(2.7-2.8)
+                stat: pvp_damage
+                min: 3.6
+                max: 3.8
             legendary:
-                stats:
-                    - pvp_damage(3.9-4)
-                    - physical_damage(2.9-3)
-                    - lifesteal(2.9-3)
-                    - projectile_damage(2.9-3)
+                stat: pvp_damage
+                min: 3.9
+                max: 4
     spinel:
         gem: gemstones.spinel
         name: "Spinel"
@@ -690,23 +647,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - pve_damage(4-5)
+                stat: pve_damage
+                min: 4
+                max: 5
             rare:
-                stats:
-                    - pve_damage(5.1-6)
-                    - physical_damage(2.5-2.6)
+                stat: pve_damage
+                min: 5.1
+                max: 6
             epic:
-                stats:
-                    - pve_damage(6.1-7)
-                    - physical_damage(2.7-2.8)
-                    - lifesteal(2.7-2.8)
+                stat: pve_damage
+                min: 6.1
+                max: 7
             legendary:
-                stats:
-                    - pve_damage(7.1-8)
-                    - physical_damage(2.9-3)
-                    - lifesteal(2.9-3)
-                    - projectile_damage(2.9-3)
+                stat: pve_damage
+                min: 7.1
+                max: 8
     alexandrite:
         gem: gemstones.alexandrite
         name: "Alexandrite"
@@ -715,23 +670,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - physical_damage(3-3.2)
+                stat: physical_damage
+                min: 3
+                max: 3.2
             rare:
-                stats:
-                    - physical_damage(3.3-3.5)
-                    - pve_damage(1.1-2)
+                stat: physical_damage
+                min: 3.3
+                max: 3.5
             epic:
-                stats:
-                    - physical_damage(3.6-3.8)
-                    - pve_damage(2.1-3)
-                    - pvp_damage(2.7-2.8)
+                stat: physical_damage
+                min: 3.6
+                max: 3.8
             legendary:
-                stats:
-                    - physical_damage(3.9-4)
-                    - pve_damage(3.1-4)
-                    - pvp_damage(2.9-3)
-                    - lifesteal(2.9-3)
+                stat: physical_damage
+                min: 3.9
+                max: 4
     firestone:
         gem: gemstones.firestone
         name: "Direstone"
@@ -740,23 +693,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - projectile_damage(3-3.2)
+                stat: projectile_damage
+                min: 3
+                max: 3.2
             rare:
-                stats:
-                    - projectile_damage(3.3-3.5)
-                    - pve_damage(1.1-2)
+                stat: projectile_damage
+                min: 3.3
+                max: 3.5
             epic:
-                stats:
-                    - projectile_damage(3.6-3.8)
-                    - pve_damage(2.1-3)
-                    - pvp_damage(2.7-2.8)
+                stat: projectile_damage
+                min: 3.6
+                max: 3.8
             legendary:
-                stats:
-                    - projectile_damage(3.9-4)
-                    - pve_damage(3.1-4)
-                    - pvp_damage(2.9-3)
-                    - lifesteal(2.9-3)
+                stat: projectile_damage
+                min: 3.9
+                max: 4
     cloudstone:
         gem: gemstones.cloudstone
         name: "Cloudstone"
@@ -765,23 +716,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - lifesteal(3-3.2)
+                stat: lifesteal
+                min: 3
+                max: 3.2
             rare:
-                stats:
-                    - lifesteal(3.3-3.5)
-                    - pvp_damage(2.5-2.6)
+                stat: lifesteal
+                min: 3.3
+                max: 3.5
             epic:
-                stats:
-                    - lifesteal(3.6-3.8)
-                    - pvp_damage(2.7-2.8)
-                    - pve_damage(2.1-3)
+                stat: lifesteal
+                min: 3.6
+                max: 3.8
             legendary:
-                stats:
-                    - lifesteal(3.9-4)
-                    - pvp_damage(2.9-3)
-                    - pve_damage(3.1-4)
-                    - projectile_damage(2.9-3)
+                stat: lifesteal
+                min: 3.9
+                max: 4
     ruby:
         gem: gemstones.ruby
         name: "Ruby"
@@ -790,23 +739,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - max_health(2-2)
+                stat: max_health
+                min: 2
+                max: 2
             rare:
-                stats:
-                    - max_health(2.1-2.2)
-                    - pvp_damage_reduction(3-5-3.6)
+                stat: max_health
+                min: 2.1
+                max: 2.2
             epic:
-                stats:
-                    - max_health(2.3-2.4)
-                    - pvp_damage_reduction(3.7-3.8)
-                    - dodge_rating(3.7-3.8)
+                stat: max_health
+                min: 2.3
+                max: 2.4
             legendary:
-                stats:
-                    - max_health(2.5-2.5)
-                    - pvp_damage_reduction(3.9-4)
-                    - dodge_rating(3.9-4)
-                    - pve_damage_reduction(3.9-5)
+                stat: max_health
+                min: 2.5
+                max: 2.5
     sapphire:
         gem: gemstones.sapphire
         name: "Sapphire"
@@ -815,23 +762,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - pvp_damage_reduction(4-4.2)
+                stat: pvp_damage_reduction
+                min: 4
+                max: 4.2
             rare:
-                stats:
-                    - pvp_damage_reduction(4.3-4.5)
-                    - max_health(1.6-1.7)
+                stat: pvp_damage_reduction
+                min: 4.3
+                max: 4.5
             epic:
-                stats:
-                    - pvp_damage_reduction(4.6-4.8)
-                    - max_health(1.8-1.9)
-                    - dodge_rating(3.7-3.8)
+                stat: pvp_damage_reduction
+                min: 4.6
+                max: 4.8
             legendary:
-                stats:
-                    - pvp_damage_reduction(4.9-5)
-                    - max_health(2-2)
-                    - dodge_rating(3.9-4)
-                    - parry_rating(3.9-4)
+                stat: pvp_damage_reduction
+                min: 4.9
+                max: 5
     topaz:
         gem: gemstones.topaz
         name: "Topaz"
@@ -840,23 +785,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - pve_damage_reduction(5-6.2)
+                stat: pve_damage_reduction
+                min: 5
+                max: 6.2
             rare:
-                stats:
-                    - pve_damage_reduction(6.3-7.5)
-                    - max_health(1.6-1.7)
+                stat: pve_damage_reduction
+                min: 6.3
+                max: 7.5
             epic:
-                stats:
-                    - pve_damage_reduction(7.6-8.8)
-                    - max_health(1.8-1.9)
-                    - parry_rating(3.7-3.8)
+                stat: pve_damage_reduction
+                min: 7.6
+                max: 8.8
             legendary:
-                stats:
-                    - pve_damage_reduction(8.9-10)
-                    - max_health(2-2)
-                    - parry_rating(3.9-4)
-                    - dodge_rating(3.9-4)
+                stat: pve_damage_reduction
+                min: 8.9
+                max: 10
     citrine:
         gem: gemstones.citrine
         name: "Citrine"
@@ -865,23 +808,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - dodge_rating(4-4.2)
+                stat: dodge_rating
+                min: 4
+                max: 4.2
             rare:
-                stats:
-                    - dodge_rating(4.3-4.5)
-                    - max_health(1.6-1.7)
+                stat: dodge_rating
+                min: 4.3
+                max: 4.5
             epic:
-                stats:
-                    - dodge_rating(4.6-4.8)
-                    - max_health(1.8-1.9)
-                    - pvp_damage_reduction(3.7-3.8)
+                stat: dodge_rating
+                min: 4.6
+                max: 4.8
             legendary:
-                stats:
-                    - dodge_rating(4.9-5)
-                    - max_health(2-2)
-                    - pvp_damage_reduction(3.9-4)
-                    - pve_damage_reduction(3.9-5)
+                stat: dodge_rating
+                min: 4.9
+                max: 5
     morganite:
         gem: gemstones.morganite
         name: "Morganite"
@@ -890,23 +831,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - parry_rating(4-4.2)
+                stat: parry_rating
+                min: 4
+                max: 4.2
             rare:
-                stats:
-                    - parry_rating(4.3-4.5)
-                    - max_health(1.6-1.7)
+                stat: parry_rating
+                min: 4.3
+                max: 4.5
             epic:
-                stats:
-                    - parry_rating(4.6-4.8)
-                    - max_health(1.8-1.9)
-                    - pve_damage_reduction(2.6-3.8)
+                stat: parry_rating
+                min: 4.6
+                max: 4.8
             legendary:
-                stats:
-                    - parry_rating(4.9-5)
-                    - max_health(2-2)
-                    - pve_damage_reduction(3.9-5)
-                    - pvp_damage_reduction(3.9-4)
+                stat: parry_rating
+                min: 4.9
+                max: 5
     crystallite:
         gem: gemstones.crystallite
         name: "Crystallite"
@@ -915,23 +854,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - pvp_damage(4-4.2)
+                stat: pvp_damage
+                min: 4
+                max: 4.2
             rare:
-                stats:
-                    - pvp_damage(4.3-4.5)
-                    - physical_damage(3.5-3.6)
+                stat: pvp_damage
+                min: 4.3
+                max: 4.5
             epic:
-                stats:
-                    - pvp_damage(4.6-4.8)
-                    - physical_damage(3.7-3.8)
-                    - lifesteal(3.7-3.8)
+                stat: pvp_damage
+                min: 4.6
+                max: 4.8
             legendary:
-                stats:
-                    - pvp_damage(4.9-5)
-                    - physical_damage(3.9-4)
-                    - lifesteal(3.9-4)
-                    - projectile_damage(3.9-4)
+                stat: pvp_damage
+                min: 4.9
+                max: 5
     tigers_eye:
         gem: gemstones.tigers_eye
         name: "Tiger's Eye"
@@ -940,23 +877,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - pve_damage(5-6.2)
+                stat: pve_damage
+                min: 5
+                max: 6.2
             rare:
-                stats:
-                    - pve_damage(6.3-7.5)
-                    - physical_damage(3.5-3.6)
+                stat: pve_damage
+                min: 6.3
+                max: 7.5
             epic:
-                stats:
-                    - pve_damage(7.6-8.8)
-                    - physical_damage(3.7-3.8)
-                    - lifesteal(3.7-3.8)
+                stat: pve_damage
+                min: 7.6
+                max: 8.8
             legendary:
-                stats:
-                    - pve_damage(8.9-10)
-                    - physical_damage(3.9-4)
-                    - lifesteal(3.9-4)
-                    - projectile_damage(3.9-4)
+                stat: pve_damage
+                min: 8.9
+                max: 10
     serpents_eye:
         gem: gemstones.serpents_eye
         name: "Serpent's Eye"
@@ -965,23 +900,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - physical_damage(4-4.2)
+                stat: physical_damage
+                min: 4
+                max: 4.2
             rare:
-                stats:
-                    - physical_damage(4.3-4.5)
-                    - pve_damage(1.3-2.5)
+                stat: physical_damage
+                min: 4.3
+                max: 4.5
             epic:
-                stats:
-                    - physical_damage(4.6-4.8)
-                    - pve_damage(2.6-3.8)
-                    - pvp_damage(3.7-3.8)
+                stat: physical_damage
+                min: 4.6
+                max: 4.8
             legendary:
-                stats:
-                    - physical_damage(4.9-5)
-                    - pve_damage(3.9-5)
-                    - pvp_damage(3.9-4)
-                    - lifesteal(3.9-4)
+                stat: physical_damage
+                min: 4.9
+                max: 5
     musgravite:
         gem: gemstones.musgravite
         name: "Musgravite"
@@ -990,23 +923,21 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - projectile_damage(4-4.2)
+                stat: projectile_damage
+                min: 4
+                max: 4.2
             rare:
-                stats:
-                    - projectile_damage(4.3-4.5)
-                    - pve_damage(1.3-2.5)
+                stat: projectile_damage
+                min: 4.3
+                max: 4.5
             epic:
-                stats:
-                    - projectile_damage(4.6-4.8)
-                    - pve_damage(2.6-3.8)
-                    - pvp_damage(3.7-3.8)
+                stat: projectile_damage
+                min: 4.6
+                max: 4.8
             legendary:
-                stats:
-                    - projectile_damage(4.9-5)
-                    - pve_damage(3.9-5)
-                    - pvp_damage(3.9-4)
-                    - lifesteal(3.9-4)
+                stat: projectile_damage
+                min: 4.9
+                max: 5
     taaffeite:
         gem: gemstones.taaffeite
         name: "Taaffeite"
@@ -1015,20 +946,18 @@ gems:
         socket_name_colour: white
         rarities:
             common:
-                stats:
-                    - lifesteal(4-4.2)
+                stat: lifesteal
+                min: 4
+                max: 4.2
             rare:
-                stats:
-                    - lifesteal(4.3-4.5)
-                    - pvp_damage(3.5-3.6)
+                stat: lifesteal
+                min: 4.3
+                max: 4.5
             epic:
-                stats:
-                    - lifesteal(4.6-4.8)
-                    - pvp_damage(3.7-3.8)
-                    - pve_damage(2.6-3.8)
+                stat: lifesteal
+                min: 4.6
+                max: 4.8
             legendary:
-                stats:
-                    - lifesteal(4.9-5)
-                    - pvp_damage(3.9-4)
-                    - pve_damage(3.9-5)
-                    - projectile_damage(3.9-4)
+                stat: lifesteal
+                min: 4.9
+                max: 5

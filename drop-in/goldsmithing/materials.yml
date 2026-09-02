@@ -1,0 +1,12 @@
+moldable_gold:
+    name: "Moldable Gold"
+    path: m.materials.moldable_gold
+    type: gold
+rough_gold:
+    name: "Rough Gold"
+    path: m.materials.rough_gold
+    type: gold
+shiny_gold:
+    name: "Shiny Gold"
+    path: m.materials.shiny_gold
+    type: gold

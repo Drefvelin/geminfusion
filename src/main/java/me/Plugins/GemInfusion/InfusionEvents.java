@@ -145,7 +145,7 @@ public class InfusionEvents implements Listener{
 												player.sendMessage("§e"+p.getName()+" just infused a "+r.getName()+" "+gem.getColour()+gem.getName()+"§e Gemstone");
 											}
 										}
-										ItemStack dropGem = getInfusedGem(gem, b.getCurrentItems().size(), r);
+										ItemStack dropGem = getInfusedGem(p, gem, b.getCurrentItems().size(), r);
 										Location dropLocation = b.getLocation().clone().add(0.5, 1.1, 0.5); // Center-top of the block
 										Item dropped = p.getWorld().dropItem(dropLocation, dropGem);
 
@@ -196,7 +196,7 @@ public class InfusionEvents implements Listener{
 		return rarity;
 	}
 	
-	public ItemStack getInfusedGem(Gemstone gem, Integer amount, GemRarity r) {
-		return InfusedGemBuilder.buildInfusedGem(gem, r, amount);
+	public ItemStack getInfusedGem(Player player, Gemstone gem, Integer amount, GemRarity r) {
+		return InfusedGemBuilder.buildInfusedGem(gem, r, amount, player);
 	}
 }

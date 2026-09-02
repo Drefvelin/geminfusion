@@ -4,10 +4,18 @@ name: GemInfusion
 version: 1.0
 author: Drefvelin
 
-depend: [MMOItems, MythicLib]
-softdepend: [TLibs]
+depend: [TLibs, MMOItems, MythicLib]
+softdepend: [MMOCore]
 
 commands:
   geminfusion:
-      useage: /<command>
-      description: Gem Infusion Command
+    usage: /<command> reload | select <projectId>
+    description: Gem Infusion and goldsmithing admin command
+
+permissions:
+  geminfusion.admin:
+    description: Access to GemInfusion admin commands
+    default: op
+  professions.goldsmith:
+    description: Use goldsmithing tables, tools, and project menu
+    default: false
