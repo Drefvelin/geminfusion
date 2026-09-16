@@ -24,8 +24,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import io.lumine.mythic.lib.api.item.NBTItem;
-import me.Plugins.GemInfusion.ConfigLoader;
-import me.Plugins.GemInfusion.Gemstone;
 import me.Plugins.GemInfusion.Permissions;
 import me.Plugins.TLibs.TLibs;
 import me.Plugins.TLibs.Objects.Utils.IntCounter;
@@ -142,13 +140,16 @@ public class GoldsmithStationManager implements Listener {
 			return;
 		}
 
+		e.setCancelled(true);
 		if (!Permissions.canUseGoldsmith(player)) {
+			if (!onCooldown(player)) {
+				player.sendMessage("§cYou do not have permission to use goldsmithing.");
+				markCooldown(player);
+			}
 			return;
 		}
 		if (onCooldown(player)) return;
-		if (handleLeftClick(e)) {
-			e.setCancelled(true);
-		}
+		handleLeftClick(e);
 	}
 
 	@EventHandler
@@ -214,7 +215,10 @@ public class GoldsmithStationManager implements Listener {
 			markCooldown(p);
 			GoldsmithStation station = getOrCreate(e.getClickedBlock().getLocation());
 			openMenu.put(p.getUniqueId(), station);
-			menus.openMenu(p);
+			int projectCount = menus.openMenu(p);
+			if (projectCount == 0) {
+				p.sendMessage("§cNo goldsmithing projects are available. Contact staff.");
+			}
 			return;
 		}
 
@@ -224,7 +228,7 @@ public class GoldsmithStationManager implements Listener {
 			return;
 		}
 
-		if (isInfusedGem(hand)) {
+		if (existing.getProject().requiresGem() && InfusedGemValidator.isGemstoneCandidate(hand)) {
 			markCooldown(p);
 			GoldsmithFeedback feedback = existing.addGem(hand);
 			switch (feedback) {
@@ -238,6 +242,10 @@ public class GoldsmithStationManager implements Listener {
 				case CAPACITY:
 					p.sendMessage("§cThis bench already has a gem");
 					p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1f, 0.5f);
+					break;
+				case NOT_INFUSED:
+					p.sendMessage("§cYou need an infused gem for jewelry.");
+					p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
 					break;
 				case WRONG_TYPE:
 					p.sendMessage("§cThis project does not need a gem");
@@ -283,13 +291,21 @@ public class GoldsmithStationManager implements Listener {
 		}
 	}
 
-	private boolean handleLeftClick(PlayerInteractEvent e) {
+	private void handleLeftClick(PlayerInteractEvent e) {
 		Player p = e.getPlayer();
 		GoldsmithStation station = get(e.getClickedBlock().getLocation());
-		if (station == null || !station.hasProject()) return false;
+		if (station == null || !station.hasProject()) {
+			if (!onCooldown(p)) {
+				p.sendMessage("§7Right-click the bench to choose a project.");
+				markCooldown(p);
+			}
+			return;
+		}
 
 		ItemStack hand = p.getInventory().getItemInMainHand();
-		if (hand == null || hand.getType().isAir()) return false;
+		if (hand == null || hand.getType().isAir()) {
+			return;
+		}
 
 		if (isBranding(hand)) {
 			markCooldown(p);
@@ -299,43 +315,39 @@ public class GoldsmithStationManager implements Listener {
 				giveOrDrop(p, refund);
 				p.sendMessage("§cProject cancelled");
 				p.getWorld().playSound(station.getLoc(), Sound.ITEM_SHIELD_BREAK, 0.4f, 1f);
-				return true;
+				return;
 			}
 			GoldsmithFeedback finish = station.canFinish();
 			if (finish == GoldsmithFeedback.LACKING_ITEMS) {
 				p.sendMessage("§cYou have to add all the gold and the gem before finishing");
 				p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
-				return true;
+				return;
 			}
 			if (finish == GoldsmithFeedback.LACKING_HITS) {
-				p.sendMessage("§cYou need to complete all the hits before finishing");
+				p.sendMessage("§7Hits: §e" + Math.round(station.getHitPercent()) + "%");
 				p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
-				return true;
+				return;
 			}
-			if (finish == GoldsmithFeedback.RECIPE_MISMATCH) {
-				p.sendMessage("§cThe materials do not match the recipe");
+			if (finish == GoldsmithFeedback.NOT_INFUSED) {
+				p.sendMessage("§cYou need an infused gem for jewelry.");
 				p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
-				return true;
+				return;
 			}
 			completeCraft(p, station);
-			return true;
+			return;
 		}
 
 		NBTItem nbt = NBTItem.get(hand);
-		if (!nbt.hasType()) return false;
+		if (!nbt.hasType()) return;
 		GoldsmithHit hit = GoldsmithHitLoader.getByTool(nbt.getType() + "." + nbt.getString("MMOITEMS_ITEM_ID"));
-		if (hit == null) return false;
+		if (hit == null) return;
 
 		markCooldown(p);
 		GoldsmithFeedback feedback = station.hit(hit);
 		switch (feedback) {
 			case SUCCESS:
-				IntCounter typeCounter = station.getHitTypes().get(hit.getType());
 				markDirty();
-				GoldsmithHitType type = hit.getType();
-				String typeName = type == null ? "Hits" : type.getName();
-				String progress = typeCounter == null ? "" : typeCounter.getCurrent() + "/" + typeCounter.getNeeded();
-				p.sendTitle("§a+1 " + hit.getName(), typeName + " §e" + progress, 5, 20, 5);
+				p.sendTitle("§7Hits §e" + station.getTotalHitCount(), "", 5, 20, 5);
 				playWorkFx(station.getLoc(), Material.GOLD_BLOCK);
 				p.getWorld().playSound(station.getLoc(), Sound.BLOCK_ANVIL_USE, 0.4f, 1f);
 				break;
@@ -351,14 +363,9 @@ public class GoldsmithStationManager implements Listener {
 				p.sendMessage("§cThis tool is not needed for this project");
 				p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
 				break;
-			case CAPACITY:
-				p.sendMessage("§cYou dont need more hits with this tool");
-				p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1f, 0.5f);
-				break;
 			default:
 				break;
 		}
-		return true;
 	}
 
 	private void sendStatus(Player p, GoldsmithStation station) {
@@ -370,42 +377,40 @@ public class GoldsmithStationManager implements Listener {
 		if (station.getProject().requiresGem()) {
 			p.sendMessage("§7gem: §e" + (station.hasGem() ? "1/1" : "0/1"));
 		}
-		for (Map.Entry<GoldsmithHitType, IntCounter> e : station.getHitTypes().entrySet()) {
-			IntCounter c = e.getValue();
-			p.sendMessage(e.getKey().getName() + "§7: §e" + c.getCurrent() + "/" + c.getNeeded());
-		}
+		p.sendMessage("§7Recipe: §e" + Math.round(station.getRecipePercent()) + "%");
+		p.sendMessage("§7Hits: §e" + Math.round(station.getHitPercent()) + "%");
+		p.sendMessage("§7Total: §e" + Math.round(station.getFinishedTotal()) + "%");
+		p.sendMessage("§7Left-click branding to finish");
 		p.sendMessage("§cSHIFT + LEFT CLICK with the branding tool to cancel the project!");
 	}
 
 	private void completeCraft(Player p, GoldsmithStation station) {
-		ItemStack output = JewelryOutput.build(station, p);
-		if (output == null) {
+		JewelryCraftResult result = JewelryOutput.build(station, p);
+		if (result == null) {
 			p.sendMessage("§cCould not create that item. Contact an administrator.");
 			p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
 			return;
 		}
 		Location drop = station.getLoc().clone().add(0.5, 1, 0.5);
 		if (drop.getWorld() != null) {
-			drop.getWorld().dropItemNaturally(drop, output);
+			drop.getWorld().dropItemNaturally(drop, result.getItem());
 			drop.getWorld().playSound(drop, Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
 			drop.getWorld().playSound(drop, Sound.BLOCK_ANVIL_PLACE, 1f, 1f);
 		}
 		p.sendTitle("§aYou made a " + station.getProject().getName(), "", 5, 40, 10);
+		p.sendMessage("§7Recipe: §e" + Math.round(result.getRecipePercent()) + "%");
+		p.sendMessage("§7Hits: §e" + Math.round(result.getHitPercent()) + "%");
+		p.sendMessage("§7Total: §e" + Math.round(result.getFinishedTotal()) + "%");
+		if (result.getQuality() != null) {
+			p.sendMessage("§7Quality: " + result.getQuality().getName());
+		}
+		p.sendMessage("§7Stat carry: §e" + Math.round(result.getStatCarryPercent()) + "%");
 		station.cancel();
 		remove(station.getLoc());
 	}
 
 	private boolean isBranding(ItemStack item) {
 		return TLibs.getItemAPI().getChecker().checkItemWithPath(item, GoldsmithCache.brandingTool);
-	}
-
-	private boolean isInfusedGem(ItemStack item) {
-		if (item == null || item.getType().isAir()) return false;
-		NBTItem nbt = NBTItem.get(item);
-		if (!nbt.hasType()) return false;
-		if (!"Infused Gemstone".equalsIgnoreCase(nbt.getString("MMOITEMS_DISPLAYED_TYPE"))) return false;
-		Gemstone gem = ConfigLoader.findGemByMmoItem(nbt.getType(), nbt.getString("MMOITEMS_ITEM_ID"));
-		return gem != null;
 	}
 
 	private GoldsmithMaterial matchMaterial(ItemStack item) {
@@ -444,7 +449,7 @@ public class GoldsmithStationManager implements Listener {
 	private void playWorkFx(Location loc, Material dust) {
 		if (loc.getWorld() == null) return;
 		loc.getWorld().spawnParticle(
-				Particle.BLOCK_DUST,
+				Particle.BLOCK,
 				loc.clone().add(0.5, 1, 0.5),
 				20, 0.1, 0.2, 0.1,
 				dust.createBlockData());

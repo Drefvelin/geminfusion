@@ -7,3 +7,6 @@ branding-tool: m.tools.goldsmith_branding_tool
 # Profession node checked when using a bench. Leave empty to allow everyone.
 # geminfusion.admin always bypasses. This plugin does not grant the node.
 permission: professions.goldsmith
+
+# Minimum fraction of required hits (from deposited materials) to allow branding finish.
+min-hit-percent: 0.40

@@ -1,5 +1,8 @@
 package me.Plugins.GemInfusion.goldsmith;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -11,10 +14,12 @@ import me.Plugins.GemInfusion.GemRarityPdc;
 import me.Plugins.GemInfusion.GemStat;
 import me.Plugins.GemInfusion.Gemstone;
 import me.Plugins.TLibs.TLibs;
+import net.Indyuce.mmoitems.ItemStats;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.item.mmoitem.LiveMMOItem;
 import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
 import net.Indyuce.mmoitems.stat.data.DoubleData;
+import net.Indyuce.mmoitems.stat.data.StringListData;
 import net.Indyuce.mmoitems.stat.type.ItemStat;
 import net.Indyuce.mmoitems.stat.type.StatHistory;
 
@@ -23,11 +28,15 @@ public final class JewelryOutput {
 	private JewelryOutput() {
 	}
 
-	public static ItemStack build(GoldsmithStation station, Player player) {
+	public static JewelryCraftResult build(GoldsmithStation station, Player player) {
 		JewelryProject project = station.getProject();
 		ItemStack gemStack = station.getGem();
 		if (project == null || gemStack == null) {
 			GoldsmithLog.warn("Jewelry output missing project or gem.");
+			return null;
+		}
+		if (!InfusedGemValidator.isInfused(gemStack)) {
+			GoldsmithLog.warn("Rejected jewelry craft: deposited gem is not infused.");
 			return null;
 		}
 
@@ -37,8 +46,16 @@ public final class JewelryOutput {
 			return null;
 		}
 
-		double delta = AttributeInfluence.jewelry.forPlayer(player);
-		double amount = Math.floor(roll.value * (1.0 + delta) * 10000) / 10000;
+		double recipePct = station.getRecipePercent();
+		double hitPct = station.getHitPercent();
+		double finishedTotal = GoldsmithMath.finishedTotal(recipePct, hitPct);
+		Quality quality = QualityLoader.getByAmount(finishedTotal);
+		double statCarry = QualityLoader.resolveStatFactor(finishedTotal);
+
+		double projectMult = project.getTierMultiplier();
+		double qualityMult = statCarry / 100.0;
+		double attributeMult = 1.0 + AttributeInfluence.jewelry.forPlayer(player);
+		double amount = Math.floor(roll.value * projectMult * qualityMult * attributeMult * 10000) / 10000;
 
 		String path = project.getItem();
 		ItemStack base = TLibs.getItemAPI().getCreator().getItemFromPath(path);
@@ -51,13 +68,22 @@ public final class JewelryOutput {
 		if (!applyStat(mmo, roll.statId, amount)) {
 			return null;
 		}
+		if (quality != null) {
+			applyQualityLore(mmo, quality);
+		}
 		ItemStack out = mmo.newBuilder().build();
 		if (out == null) {
 			GoldsmithLog.warn("Could not build jewelry item for project " + project.getId() + ".");
 			return null;
 		}
 		out.setAmount(1);
-		return out;
+		return new JewelryCraftResult(out, recipePct, hitPct, finishedTotal, statCarry, quality);
+	}
+
+	private static void applyQualityLore(MMOItem mmo, Quality quality) {
+		List<String> loreList = new ArrayList<>();
+		loreList.add("§fQuality: " + quality.getName());
+		mmo.setData(ItemStats.LORE, new StringListData(loreList));
 	}
 
 	private static StatRoll readGemStat(ItemStack gemStack) {

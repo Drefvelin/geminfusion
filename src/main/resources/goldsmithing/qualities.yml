@@ -1,0 +1,30 @@
+crude:
+    amount: 0.0
+    value: 1
+    name: "§fRusted"
+    stat-min: 1
+    stat-max: 15
+common:
+    amount: 50.0
+    value: 2
+    name: "§aTempered"
+    stat-min: 16
+    stat-max: 29
+rare:
+    amount: 75.0
+    value: 3
+    name: "§9Polished"
+    stat-min: 30
+    stat-max: 47
+epic:
+    amount: 90.0
+    value: 4
+    name: "§5Gleaming"
+    stat-min: 48
+    stat-max: 65
+legendary:
+    amount: 100.0
+    value: 5
+    name: "§6Masterwork"
+    stat-min: 100
+    stat-max: 100

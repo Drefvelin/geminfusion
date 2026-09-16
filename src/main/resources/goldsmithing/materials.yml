@@ -1,12 +1,24 @@
+# hits scale by deposited amount (see GoldsmithStation.recomputeRequiredHits).
 moldable_gold:
     name: "Moldable Gold"
     path: m.materials.moldable_gold
     type: gold
+    hits:
+        - hit.3
+        - small_hit.2
+        - tinker.1
 rough_gold:
     name: "Rough Gold"
     path: m.materials.rough_gold
     type: gold
+    hits:
+        - hit.2
+        - small_hit.1
 shiny_gold:
     name: "Shiny Gold"
     path: m.materials.shiny_gold
     type: gold
+    hits:
+        - hit.1
+        - small_hit.3
+        - tinker.2

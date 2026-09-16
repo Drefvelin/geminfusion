@@ -2,6 +2,7 @@ package me.Plugins.GemInfusion.goldsmith;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +68,22 @@ public class GoldsmithStation {
 		return Collections.unmodifiableMap(depositedByMaterial);
 	}
 
+	public double getHitPercent() {
+		return GoldsmithMath.hitPercent(GoldsmithMath.requiredHits(depositedByMaterial), hits);
+	}
+
+	public int getTotalHitCount() {
+		return GoldsmithMath.totalHitCurrentRaw(GoldsmithMath.requiredHits(depositedByMaterial), hits);
+	}
+
+	public double getRecipePercent() {
+		return GoldsmithMath.recipePercent(project, depositedByMaterial);
+	}
+
+	public double getFinishedTotal() {
+		return GoldsmithMath.finishedTotal(getRecipePercent(), getHitPercent());
+	}
+
 	public void setProject(JewelryProject project) {
 		this.project = project;
 		types.clear();
@@ -82,16 +99,6 @@ public class GoldsmithStation {
 			c.setNeeded(e.getValue());
 			types.put(e.getKey(), c);
 		}
-		for (Map.Entry<GoldsmithHit, Integer> e : project.getHits().entrySet()) {
-			IntCounter c = new IntCounter();
-			c.setNeeded(e.getValue());
-			hits.put(e.getKey(), c);
-		}
-		for (Map.Entry<GoldsmithHitType, Integer> e : project.getHitsByType().entrySet()) {
-			IntCounter c = new IntCounter();
-			c.setNeeded(e.getValue());
-			hitTypes.put(e.getKey(), c);
-		}
 	}
 
 	/**
@@ -103,6 +110,8 @@ public class GoldsmithStation {
 		deposited.clear();
 		depositedByMaterial.clear();
 		gem = null;
+		hits.clear();
+		hitTypes.clear();
 		for (IntCounter c : types.values()) {
 			c.setCurrent(0);
 		}
@@ -116,33 +125,28 @@ public class GoldsmithStation {
 				if (bucket != null) bucket.increaseCurrent(amount);
 			}
 		}
+		recomputeRequiredHits();
 		if (hitCounts != null) {
 			for (Map.Entry<String, Integer> e : hitCounts.entrySet()) {
 				GoldsmithHit hit = GoldsmithHitLoader.getByString(e.getKey());
 				if (hit == null || e.getValue() == null) continue;
 				IntCounter counter = hits.get(hit);
-				if (counter == null) {
-					counter = new IntCounter();
-					hits.put(hit, counter);
-				}
+				if (counter == null) continue;
 				counter.setCurrent(Math.max(0, e.getValue()));
 			}
-			for (IntCounter c : hitTypes.values()) {
-				c.setCurrent(0);
-			}
-			for (Map.Entry<GoldsmithHit, IntCounter> e : hits.entrySet()) {
-				GoldsmithHitType type = e.getKey().getType();
-				if (type == null) continue;
-				IntCounter bucket = hitTypes.get(type);
-				if (bucket != null) bucket.increaseCurrent(e.getValue().getCurrent());
-			}
+			syncHitTypeCurrents();
 		}
 		if (savedDeposited != null) {
 			deposited.addAll(savedDeposited);
 		}
 		if (savedGem != null) {
-			gem = savedGem.clone();
-			gem.setAmount(1);
+			if (InfusedGemValidator.isInfused(savedGem)) {
+				gem = savedGem.clone();
+				gem.setAmount(1);
+			} else {
+				GoldsmithLog.warn("Skipped restoring non-infused gem on goldsmith station at "
+						+ loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ());
+			}
 		}
 	}
 
@@ -162,6 +166,7 @@ public class GoldsmithStation {
 			copy.setAmount(1);
 			deposited.add(copy);
 		}
+		recomputeRequiredHits();
 		return GoldsmithFeedback.SUCCESS;
 	}
 
@@ -170,6 +175,7 @@ public class GoldsmithStation {
 		if (!project.requiresGem()) return GoldsmithFeedback.WRONG_TYPE;
 		if (gem != null) return GoldsmithFeedback.CAPACITY;
 		if (stack == null) return GoldsmithFeedback.WRONG_TYPE;
+		if (!InfusedGemValidator.isInfused(stack)) return GoldsmithFeedback.NOT_INFUSED;
 		ItemStack copy = stack.clone();
 		copy.setAmount(1);
 		gem = copy;
@@ -181,10 +187,11 @@ public class GoldsmithStation {
 		if (!checkItems()) return GoldsmithFeedback.LACKING_ITEMS;
 		if (hit == null || hit.getType() == null) return GoldsmithFeedback.WRONG_TYPE;
 		if (!hitTypes.containsKey(hit.getType())) return GoldsmithFeedback.NONE;
-		if (hitTypes.get(hit.getType()).isEqual()) return GoldsmithFeedback.CAPACITY;
 
-		if (hits.containsKey(hit)) {
-			hits.get(hit).increaseCurrent(1);
+		IntCounter hitCounter = hits.get(hit);
+
+		if (hitCounter != null) {
+			hitCounter.increaseCurrent(1);
 		} else {
 			IntCounter counter = new IntCounter();
 			counter.setCurrent(1);
@@ -200,37 +207,17 @@ public class GoldsmithStation {
 			if (!c.isEqual()) return false;
 		}
 		if (project.requiresGem() && gem == null) return false;
-		return true;
-	}
-
-	public boolean checkExactHits() {
-		if (project == null) return false;
-		for (GoldsmithHit required : project.getHits().keySet()) {
-			IntCounter c = hits.get(required);
-			if (c == null || !c.isEqual()) return false;
-		}
-		for (Map.Entry<GoldsmithHit, IntCounter> e : hits.entrySet()) {
-			if (!e.getValue().isEqual()) return false;
-		}
-		return true;
-	}
-
-	public boolean checkExactRecipe() {
-		if (project == null) return false;
-		Map<GoldsmithMaterial, Integer> recipe = project.getRecipe();
-		if (depositedByMaterial.size() != recipe.size()) return false;
-		for (Map.Entry<GoldsmithMaterial, Integer> e : recipe.entrySet()) {
-			Integer have = depositedByMaterial.get(e.getKey());
-			if (have == null || !have.equals(e.getValue())) return false;
-		}
+		if (project.requiresGem() && gem != null && !InfusedGemValidator.isInfused(gem)) return false;
 		return true;
 	}
 
 	public GoldsmithFeedback canFinish() {
 		if (project == null) return GoldsmithFeedback.NO_PROJECT;
 		if (!checkItems()) return GoldsmithFeedback.LACKING_ITEMS;
-		if (!checkExactHits()) return GoldsmithFeedback.LACKING_HITS;
-		if (!checkExactRecipe()) return GoldsmithFeedback.RECIPE_MISMATCH;
+		if (project.requiresGem() && gem != null && !InfusedGemValidator.isInfused(gem)) {
+			return GoldsmithFeedback.NOT_INFUSED;
+		}
+		if (!GoldsmithMath.meetsMinHitPercent(getHitPercent())) return GoldsmithFeedback.LACKING_HITS;
 		return GoldsmithFeedback.SUCCESS;
 	}
 
@@ -245,5 +232,53 @@ public class GoldsmithStation {
 		deposited.clear();
 		depositedByMaterial.clear();
 		return refund;
+	}
+
+	private void recomputeRequiredHits() {
+		Map<GoldsmithHit, Integer> required = GoldsmithMath.requiredHits(depositedByMaterial);
+		Iterator<Map.Entry<GoldsmithHit, IntCounter>> iterator = hits.entrySet().iterator();
+		while (iterator.hasNext()) {
+			if (!required.containsKey(iterator.next().getKey())) {
+				iterator.remove();
+			}
+		}
+		for (Map.Entry<GoldsmithHit, Integer> entry : required.entrySet()) {
+			IntCounter counter = hits.get(entry.getKey());
+			if (counter == null) {
+				counter = new IntCounter();
+				hits.put(entry.getKey(), counter);
+			}
+			counter.setNeeded(entry.getValue());
+		}
+
+		hitTypes.clear();
+		for (Map.Entry<GoldsmithHitType, Integer> entry : GoldsmithMath.requiredHitsByType(depositedByMaterial).entrySet()) {
+			IntCounter counter = new IntCounter();
+			counter.setNeeded(entry.getValue());
+			counter.setCurrent(sumHitCurrents(entry.getKey()));
+			hitTypes.put(entry.getKey(), counter);
+		}
+	}
+
+	private void syncHitTypeCurrents() {
+		for (IntCounter counter : hitTypes.values()) {
+			counter.setCurrent(0);
+		}
+		for (Map.Entry<GoldsmithHit, IntCounter> entry : hits.entrySet()) {
+			GoldsmithHitType type = entry.getKey().getType();
+			if (type == null) continue;
+			IntCounter bucket = hitTypes.get(type);
+			if (bucket != null) bucket.increaseCurrent(entry.getValue().getCurrent());
+		}
+	}
+
+	private int sumHitCurrents(GoldsmithHitType type) {
+		int total = 0;
+		for (Map.Entry<GoldsmithHit, IntCounter> entry : hits.entrySet()) {
+			if (type.equals(entry.getKey().getType())) {
+				total += entry.getValue().getCurrent();
+			}
+		}
+		return total;
 	}
 }

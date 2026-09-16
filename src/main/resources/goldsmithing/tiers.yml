@@ -1,0 +1,5 @@
+# Multiplier on gem stat before craft quality and attribute (see project tier: field).
+minor: 0.5
+lesser: 0.65
+major: 0.80
+greater: 1.0

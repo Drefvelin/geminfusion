@@ -23,7 +23,7 @@ public class GoldsmithInventoryManager {
 		return new NamespacedKey(InfusionMain.plugin, "gi_project");
 	}
 
-	public void openMenu(Player player) {
+	public int openMenu(Player player) {
 		Inventory inv = InfusionMain.plugin.getServer().createInventory(null, 27, TITLE);
 		int slot = 0;
 		for (JewelryProject project : JewelryProjectLoader.get().values()) {
@@ -33,8 +33,12 @@ public class GoldsmithInventoryManager {
 			inv.setItem(slot, decorate(icon, project));
 			slot++;
 		}
+		if (slot == 0) {
+			GoldsmithLog.warn("Goldsmithing project menu opened with zero valid project icons.");
+		}
 		fillEmpty(inv);
 		player.openInventory(inv);
+		return slot;
 	}
 
 	private ItemStack decorate(ItemStack icon, JewelryProject project) {
@@ -42,20 +46,22 @@ public class GoldsmithInventoryManager {
 		if (meta == null) return icon;
 		meta.setDisplayName(project.getName());
 		List<String> lore = new ArrayList<>();
+		lore.add("§7Tier: §e" + formatTierName(project.getTierId()));
 		for (Map.Entry<String, Integer> e : project.getMaterialsByType().entrySet()) {
 			lore.add("§7Requires §a" + e.getValue() + " " + GoldsmithMaterialTypeLoader.display(e.getKey()));
 		}
 		if (project.requiresGem()) {
-			lore.add("§7Requires §a1 §7gem");
-		}
-		lore.add(" ");
-		for (Map.Entry<GoldsmithHitType, Integer> e : project.getHitsByType().entrySet()) {
-			lore.add("§7Requires §a" + e.getValue() + " " + e.getKey().getName() + " §7hits");
+			lore.add("§7Requires §a1 §7infused gem");
 		}
 		meta.setLore(lore);
 		meta.getPersistentDataContainer().set(projectKey(), PersistentDataType.STRING, project.getId());
 		icon.setItemMeta(meta);
 		return icon;
+	}
+
+	private static String formatTierName(String tierId) {
+		if (tierId == null || tierId.isBlank()) return "Greater";
+		return tierId.substring(0, 1).toUpperCase() + tierId.substring(1).toLowerCase();
 	}
 
 	private ItemStack iconFromPath(String path, String label) {

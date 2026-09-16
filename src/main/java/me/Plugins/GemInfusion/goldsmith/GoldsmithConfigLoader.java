@@ -15,5 +15,6 @@ public class GoldsmithConfigLoader {
 		if (GoldsmithCache.permission != null && GoldsmithCache.permission.isBlank()) {
 			GoldsmithCache.permission = null;
 		}
+		GoldsmithCache.minHitPercent = config.getDouble("min-hit-percent", 0.40);
 	}
 }

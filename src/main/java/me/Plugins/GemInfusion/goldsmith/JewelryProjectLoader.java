@@ -3,6 +3,7 @@ package me.Plugins.GemInfusion.goldsmith;
 import java.io.File;
 import java.util.LinkedHashMap;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class JewelryProjectLoader {
@@ -23,7 +24,12 @@ public class JewelryProjectLoader {
 		FileConfiguration config = GoldsmithYaml.read(configFile);
 		if (config == null) return;
 		for (String key : config.getKeys(false)) {
-			map.put(key, new JewelryProject(key, config.getConfigurationSection(key)));
+			ConfigurationSection section = config.getConfigurationSection(key);
+			if (section == null || !section.contains("item")) {
+				GoldsmithLog.warn("Skipping non-project key '" + key + "' in projects.yml (missing item).");
+				continue;
+			}
+			map.put(key, new JewelryProject(key, section));
 		}
 	}
 }

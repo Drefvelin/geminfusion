@@ -83,7 +83,7 @@ public class InfusionEvents implements Listener{
 						p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount()-1);
 						b.addGem(gem);
 						p.sendTitle(ChatColor.LIGHT_PURPLE + "Added " + gem.getColour() + gem.getName(), ChatColor.GRAY + "Current Gem Amount: " + ChatColor.YELLOW + b.getCurrentItems().size()+"/10", 1, 40, 20);
-						b.getLocation().getWorld().spawnParticle(Particle.ENCHANTMENT_TABLE, b.getParticleLocation(), 60);
+						b.getLocation().getWorld().spawnParticle(Particle.ENCHANT, b.getParticleLocation(), 60);
 						p.getWorld().playSound(p.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 0.7f, 2);
 					}
 				}
@@ -95,7 +95,7 @@ public class InfusionEvents implements Listener{
 					p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount()-1);
 					iBlock.addGem(gem);
 					p.sendTitle(ChatColor.LIGHT_PURPLE + "Added " + gem.getColour() + gem.getName(), ChatColor.GRAY + "Current Gem Amount: " + ChatColor.YELLOW + iBlock.getCurrentItems().size()+"/10", 1, 40, 20);
-					iBlock.getLocation().getWorld().spawnParticle(Particle.ENCHANTMENT_TABLE, iBlock.getParticleLocation(), 60);
+					iBlock.getLocation().getWorld().spawnParticle(Particle.ENCHANT, iBlock.getParticleLocation(), 60);
 					p.getWorld().playSound(p.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 0.7f, 2);
 					currentStations.add(iBlock);
 				}
@@ -129,7 +129,7 @@ public class InfusionEvents implements Listener{
 						if(b.getInfusionHits() >= 5) {
 							currentStations.remove(b);
 							p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount()-1);
-							b.getParticleLocation().getWorld().spawnEntity(b.getParticleLocation(), EntityType.LIGHTNING);
+							b.getParticleLocation().getWorld().spawnEntity(b.getParticleLocation(), EntityType.LIGHTNING_BOLT);
 							b.getLocation().getWorld().spawnParticle(Particle.FLAME, b.getParticleLocation(), 600);
 							p.getWorld().playSound(p.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1f, 0.7f);
 							new BukkitRunnable()

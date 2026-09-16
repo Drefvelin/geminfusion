@@ -16,6 +16,8 @@ import me.Plugins.GemInfusion.goldsmith.GoldsmithMaterialLoader;
 import me.Plugins.GemInfusion.goldsmith.GoldsmithMaterialTypeLoader;
 import me.Plugins.GemInfusion.goldsmith.GoldsmithStationManager;
 import me.Plugins.GemInfusion.goldsmith.JewelryProjectLoader;
+import me.Plugins.GemInfusion.goldsmith.ProjectTierLoader;
+import me.Plugins.GemInfusion.goldsmith.QualityLoader;
 
 public class InfusionMain extends JavaPlugin {
 	public static InfusionMain plugin;
@@ -30,6 +32,8 @@ public class InfusionMain extends JavaPlugin {
 	private final GoldsmithHitLoader goldsmithHits = new GoldsmithHitLoader();
 	private final GoldsmithMaterialLoader goldsmithMaterials = new GoldsmithMaterialLoader();
 	private final GoldsmithMaterialTypeLoader goldsmithMaterialTypes = new GoldsmithMaterialTypeLoader();
+	private final ProjectTierLoader projectTiers = new ProjectTierLoader();
+	private final QualityLoader qualities = new QualityLoader();
 	private final JewelryProjectLoader jewelryProjects = new JewelryProjectLoader();
 
 	@Override
@@ -88,6 +92,8 @@ public class InfusionMain extends JavaPlugin {
 		goldsmithHits.load(new File(folder, "hits.yml"));
 		goldsmithMaterialTypes.load(new File(folder, "material-types.yml"));
 		goldsmithMaterials.load(new File(folder, "materials.yml"));
+		projectTiers.load(new File(folder, "tiers.yml"));
+		qualities.load(new File(folder, "qualities.yml"));
 		jewelryProjects.load(new File(folder, "projects.yml"));
 		goldsmithConfig.load(new File(getDataFolder(), "goldsmithing.yml"));
 	}
@@ -99,6 +105,8 @@ public class InfusionMain extends JavaPlugin {
 				"goldsmithing/hits.yml",
 				"goldsmithing/materials.yml",
 				"goldsmithing/material-types.yml",
+				"goldsmithing/tiers.yml",
+				"goldsmithing/qualities.yml",
 				"goldsmithing/projects.yml"
 		};
 		for (String s : files) {
